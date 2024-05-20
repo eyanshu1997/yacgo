@@ -73,11 +73,22 @@ func (p *Parser) ParseLetStatement() ast.Statement {
 	return stmt
 }
 
+func (p *Parser) ParseReturnStatements() ast.Statement {
+	stmt := &ast.ReturnStatement{Token: p.curToken}
+	//TODO implement handling for expressions
+	for !p.curTokenIs(tokens.TokenTypeSemiColon) {
+		p.nextToken()
+	}
+	return stmt
+}
+
 func (p *Parser) ParseStatement() ast.Statement {
 	log.Printf("Parse Statement called token : %s %s", p.curToken, p.peekToken)
 	switch p.curToken.Type {
 	case tokens.TokenTypeLet:
 		return p.ParseLetStatement()
+	case tokens.TokenTypeReturn:
+		return p.ParseReturnStatements()
 	default:
 		return nil
 	}
