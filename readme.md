@@ -9,7 +9,7 @@ First Creating a interpretter then compiler
 
 this is sudo languge that we will be writing the code for
 
-### Syntax
+### Sample Syntax
 ```
 let age =1;
 let name = "YAL"
@@ -19,6 +19,8 @@ let myhash= {"name":"yal","type":"lang"}
 let add = fn(a,b) {return a+b};
 
 ```
+For a full list [refer here](parser/parser.md#supported-syntax)
+
 ### Components
 - lexer 
 - parser
@@ -29,5 +31,7 @@ let add = fn(a,b) {return a+b};
 
 
 ## Some Notes
+
 - i wanted to undertsand how interpreters work, by creating one from scratch.
-- onlysupports ASCII
+- only supports ASCII
+- for supported operators [refer here](parser/parser.md#operators)
