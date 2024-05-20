@@ -30,18 +30,10 @@ func NewParser(l *lexer.Lexer) *Parser {
 	// Read two tokens, so curToken and peekToken are both set
 	p.prefixParseFns = make(map[tokens.TokenType]prefixParseFn)
 	p.registerPrefix(tokens.TokenTypeIdentifier, p.parseIdentifier)
+	p.registerPrefix(tokens.TokenTypeInt, p.parseIntegerLiteral)
+	p.registerPrefix(tokens.TokenTypeExclaim, p.parsePrefixExpression)
+	p.registerPrefix(tokens.TokenTypeSubtract, p.parsePrefixExpression)
 	return p
-}
-
-func (p *Parser) parseIdentifier() ast.Expression {
-	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-}
-
-func (p *Parser) registerPrefix(tokenType tokens.TokenType, fn prefixParseFn) {
-	p.prefixParseFns[tokenType] = fn
-}
-func (p *Parser) registerInfix(tokenType tokens.TokenType, fn infixParseFn) {
-	p.infixParseFns[tokenType] = fn
 }
 
 func (p *Parser) nextToken() {
