@@ -7,8 +7,15 @@ const (
 	TokenTypeInt        TokenType = "INT"
 
 	// Operators
-	TokenTypeAssign TokenType = "="
-	TokenTypePlus   TokenType = "+"
+	TokenTypeAssign  TokenType = "="
+	TokenTypeExclaim TokenType = "!"
+	TokenTypeLT      TokenType = "<"
+	TokenTypeGT      TokenType = ">"
+
+	TokenTypePlus     TokenType = "+"
+	TokenTypeSubtract TokenType = "-"
+	TokenTypeAstrisk  TokenType = "*"
+	TokenTypeDivide   TokenType = "/"
 
 	// Delimiters
 	TokenTypeComma     TokenType = ","
@@ -21,6 +28,11 @@ const (
 	// Keywords
 	TokenTypeFunction TokenType = "FUNCTION"
 	TokenTypeLet      TokenType = "LET"
+	TokenTypeTrue     TokenType = "TRUE"
+	TokenTypeFalse    TokenType = "FALSE"
+	TokenTypeIf       TokenType = "IF"
+	TokenTypeElse     TokenType = "ELSE"
+	TokenTypeReturn   TokenType = "RETURN"
 )
 
 type TokenType string

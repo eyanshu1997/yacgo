@@ -35,22 +35,37 @@ func (l *Lexer) ReadNextToken() *tokens.Token {
 	var tok = &tokens.Token{}
 	l.skipWhitespace()
 	switch l.ch {
-	case '=':
-		tok = tokens.NewToken(tokens.TokenTypeAssign, l.ch)
+	case ',':
+		tok = tokens.NewToken(tokens.TokenTypeComma, l.ch)
 	case ';':
 		tok = tokens.NewToken(tokens.TokenTypeSemiColon, l.ch)
 	case '(':
 		tok = tokens.NewToken(tokens.TokenTypeLParen, l.ch)
 	case ')':
 		tok = tokens.NewToken(tokens.TokenTypeRParen, l.ch)
-	case ',':
-		tok = tokens.NewToken(tokens.TokenTypeComma, l.ch)
-	case '+':
-		tok = tokens.NewToken(tokens.TokenTypePlus, l.ch)
 	case '{':
 		tok = tokens.NewToken(tokens.TokenTypeLBrace, l.ch)
 	case '}':
 		tok = tokens.NewToken(tokens.TokenTypeRBrace, l.ch)
+
+	case '=':
+		tok = tokens.NewToken(tokens.TokenTypeAssign, l.ch)
+	case '!':
+		tok = tokens.NewToken(tokens.TokenTypeExclaim, l.ch)
+	case '<':
+		tok = tokens.NewToken(tokens.TokenTypeLT, l.ch)
+	case '>':
+		tok = tokens.NewToken(tokens.TokenTypeGT, l.ch)
+
+	case '+':
+		tok = tokens.NewToken(tokens.TokenTypePlus, l.ch)
+	case '-':
+		tok = tokens.NewToken(tokens.TokenTypeSubtract, l.ch)
+	case '*':
+		tok = tokens.NewToken(tokens.TokenTypeAstrisk, l.ch)
+	case '/':
+		tok = tokens.NewToken(tokens.TokenTypeDivide, l.ch)
+
 	case 0:
 		tok.Type = tokens.TokenTypeEOF
 	default:

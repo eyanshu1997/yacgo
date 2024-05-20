@@ -36,7 +36,7 @@ func TestNextToken(t *testing.T) {
 	}
 }
 
-func TestFullNextToken(t *testing.T) {
+func TestLotsOfTokens(t *testing.T) {
 	input := `let five = 5;
 	let ten = 10;
 	let add = fn(x, y) {
