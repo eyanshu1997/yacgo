@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"testing"
 
 	"github.com/eyanshu1997/yacgo/ast"
@@ -218,7 +217,7 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 		l := lexer.NewLexer(tt.input)
 		p := NewParser(l)
 		program := p.ParseProgram()
-		log.Printf("For test %d test[%s]", i, tt)
+		//log.Printf("For test %d test[%s]", i, tt)
 		checkParserErrors(t, p)
 		actual := program.String()
 		if actual != tt.expected {

@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"log"
-
 	"github.com/eyanshu1997/yacgo/ast"
 	"github.com/eyanshu1997/yacgo/lexer"
 	"github.com/eyanshu1997/yacgo/tokens"
@@ -56,7 +54,7 @@ func (p *Parser) parseIfStatement() ast.Statement {
 		return nil
 	}
 	p.nextToken()
-	log.Printf("ifstatement found  %s", p.curToken)
+	//log.Printf("ifstatement found  %s", p.curToken)
 	expression.Condition = p.parseExpression(LOWEST)
 	if !p.expectPeek(tokens.TokenTypeRParen) {
 		return nil
@@ -68,7 +66,7 @@ func (p *Parser) parseIfStatement() ast.Statement {
 	if p.peekTokenIs(tokens.TokenTypeElse) {
 
 		p.nextToken()
-		log.Printf("Looking in else block curtoken [%s]", p.curToken)
+		//log.Printf("Looking in else block curtoken [%s]", p.curToken)
 		if !p.expectPeek(tokens.TokenTypeLBrace) {
 			return nil
 		}
@@ -88,7 +86,7 @@ func (p *Parser) parseLetStatement() ast.Statement {
 		return nil
 	}
 	p.nextToken()
-	log.Printf("Found let statement [%s]: [%s]", stmt, p.curToken)
+	//log.Printf("Found let statement [%s]: [%s]", stmt, p.curToken)
 	stmt.Value = p.parseExpression(LOWEST)
 	if !p.expectPeek(tokens.TokenTypeSemiColon) {
 		return nil
@@ -99,7 +97,7 @@ func (p *Parser) parseLetStatement() ast.Statement {
 func (p *Parser) parseReturnStatement() ast.Statement {
 	stmt := &ast.ReturnStatement{Token: p.curToken}
 	p.nextToken()
-	log.Printf("Found return statement [%s]: [%s]", stmt, p.curToken)
+	//log.Printf("Found return statement [%s]: [%s]", stmt, p.curToken)
 	stmt.ReturnValue = p.parseExpression(LOWEST)
 	if !p.expectPeek(tokens.TokenTypeSemiColon) {
 		return nil
@@ -119,7 +117,7 @@ func (p *Parser) parseIdentifierStatement() ast.Statement {
 		return nil
 	}
 	p.nextToken()
-	log.Printf("Found assignment statement [%s]: [%s]", stmt, p.curToken)
+	//log.Printf("Found assignment statement [%s]: [%s]", stmt, p.curToken)
 	stmt.Value = p.parseExpression(LOWEST)
 	if !p.expectPeek(tokens.TokenTypeSemiColon) {
 		return nil
@@ -128,7 +126,7 @@ func (p *Parser) parseIdentifierStatement() ast.Statement {
 }
 
 func (p *Parser) parseStatement() ast.Statement {
-	log.Printf("Parse Statement called token : %s %s", p.curToken, p.peekToken)
+	//log.Printf("Parse Statement called token : %s %s", p.curToken, p.peekToken)
 	switch p.curToken.Type {
 	case tokens.TokenTypeLet:
 		return p.parseLetStatement()
@@ -152,7 +150,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 	for p.curToken.Type != tokens.TokenTypeEOF {
 		stmt := p.parseStatement()
 		if stmt != nil {
-			log.Printf("Got statement %s", stmt)
+			//log.Printf("Got statement %s", stmt)
 			program.Statements = append(program.Statements, stmt)
 		}
 		p.nextToken()

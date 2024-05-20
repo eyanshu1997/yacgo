@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/eyanshu1997/yacgo/ast"
@@ -125,29 +124,29 @@ func (p *Parser) noPrefixParseFnError(t tokens.TokenType) {
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
-	log.Printf("parseExpression current token %s", p.curToken)
+	//log.Printf("parseExpression current token %s", p.curToken)
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
 		p.noPrefixParseFnError(p.curToken.Type)
 		return nil
 	}
 	leftExp := prefix()
-	log.Printf("parseExpression after prefixParseFns leftExp [%s] currtoen[%s] peektokenType[%s][%d]", leftExp, p.curToken, p.peekToken, p.peekPrecedence())
+	//log.Printf("parseExpression after prefixParseFns leftExp [%s] currtoen[%s] peektokenType[%s][%d]", leftExp, p.curToken, p.peekToken, p.peekPrecedence())
 	for !p.peekTokenIs(tokens.TokenTypeSemiColon) && precedence < p.peekPrecedence() {
-		log.Printf("inside loop for parseExpression")
+		//log.Printf("inside loop for parseExpression")
 		infix := p.infixParseFns[p.peekToken.Type]
 		if infix == nil {
 			return leftExp
 		}
 		p.nextToken()
 		leftExp = infix(leftExp)
-		log.Printf("inside loop for parseExpression after infix [%s] curtoken [%s]", leftExp, p.curToken)
+		//log.Printf("inside loop for parseExpression after infix [%s] curtoken [%s]", leftExp, p.curToken)
 	}
 	return leftExp
 }
 
 func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
-	log.Printf("Call expresion called %s token:[%s]", function, p.curToken)
+	//log.Printf("Call expresion called %s token:[%s]", function, p.curToken)
 	exp := &ast.CallExpression{Token: p.curToken, Function: function}
 	exp.Arguments = p.parseCallArguments()
 	return exp
