@@ -9,19 +9,39 @@ import (
 	"github.com/eyanshu1997/yacgo/tokens"
 )
 
+type (
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
+)
+
 type Parser struct {
-	l         *lexer.Lexer
-	curToken  tokens.Token
-	peekToken tokens.Token
-	errors    []string
+	l              *lexer.Lexer
+	curToken       tokens.Token
+	peekToken      tokens.Token
+	errors         []string
+	prefixParseFns map[tokens.TokenType]prefixParseFn
+	infixParseFns  map[tokens.TokenType]infixParseFn
 }
 
 func NewParser(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
+	p.nextToken()
+	p.nextToken()
 	// Read two tokens, so curToken and peekToken are both set
-	p.nextToken()
-	p.nextToken()
+	p.prefixParseFns = make(map[tokens.TokenType]prefixParseFn)
+	p.registerPrefix(tokens.TokenTypeIdentifier, p.parseIdentifier)
 	return p
+}
+
+func (p *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+}
+
+func (p *Parser) registerPrefix(tokenType tokens.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
+}
+func (p *Parser) registerInfix(tokenType tokens.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
 }
 
 func (p *Parser) nextToken() {
@@ -90,7 +110,8 @@ func (p *Parser) ParseStatement() ast.Statement {
 	case tokens.TokenTypeReturn:
 		return p.ParseReturnStatements()
 	default:
-		return nil
+		// TODO remove expression type statements
+		return p.parseExpressionStatement()
 	}
 }
 

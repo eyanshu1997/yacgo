@@ -21,6 +21,7 @@ we will also consider functiondefinations as expressions
 -5
 !true
 !false
+--5
 
 #### binary operators
 
@@ -54,3 +55,6 @@ fn(x, y) { return x + y }(5, 5)
 ### if expressions
 let result = if (10 > 5) { true } else { false };
 result // => true
+
+### postfix operators
+not supported here
