@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/eyanshu1997/yacgo/ast"
+	"github.com/eyanshu1997/yacgo/common/log"
 	"github.com/eyanshu1997/yacgo/lexer"
 )
 
@@ -217,7 +218,7 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 		l := lexer.NewLexer(tt.input)
 		p := NewParser(l)
 		program := p.ParseProgram()
-		//log.Printf("For test %d test[%s]", i, tt)
+		log.Printf("For test %d test[%s]", i, tt)
 		checkParserErrors(t, p)
 		actual := program.String()
 		if actual != tt.expected {

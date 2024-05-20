@@ -1,10 +1,9 @@
 package lexer
 
 import (
-	"log"
-
+	"github.com/eyanshu1997/yacgo/common/log"
+	"github.com/eyanshu1997/yacgo/common/utils"
 	"github.com/eyanshu1997/yacgo/tokens"
-	"github.com/eyanshu1997/yacgo/utils"
 )
 
 type Lexer struct {
@@ -21,7 +20,7 @@ func NewLexer(input string) *Lexer {
 }
 
 func (l *Lexer) readNextChar() {
-	// log.Printf("readNextChar Called readPosition %d position %d len input %d", l.readPosition, l.position, len(l.input))
+	log.Printf("readNextChar Called readPosition %d position %d len input %d", l.readPosition, l.position, len(l.input))
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
 	} else {
@@ -82,7 +81,7 @@ func (l *Lexer) ReadNextToken() *tokens.Token {
 	if tokens.CanHaveNextToken(l.ch) {
 		tok = l.getMultiToken()
 		if tok != nil {
-			log.Println("Found multitoken", tok)
+			log.Printf("Found multitoken %s", tok)
 			l.readNextChar()
 			return tok
 		}

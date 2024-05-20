@@ -2,8 +2,8 @@ package parser
 
 import (
 	"fmt"
-	"log"
 
+	"github.com/eyanshu1997/yacgo/common/log"
 	"github.com/eyanshu1997/yacgo/tokens"
 )
 
