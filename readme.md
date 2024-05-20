@@ -30,4 +30,4 @@ let add = fn(a,b) {return a+b};
 
 ## Some notes
 - i wanted to undertsand how interpretters work, by creating one from scratch.
-- 
+- onlysupports ASCII
