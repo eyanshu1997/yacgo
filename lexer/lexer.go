@@ -1,8 +1,6 @@
 package lexer
 
 import (
-	"log"
-
 	"github.com/eyanshu1997/yacgo/tokens"
 	"github.com/eyanshu1997/yacgo/utils"
 )
@@ -21,7 +19,7 @@ func NewLexer(input string) *Lexer {
 }
 
 func (l *Lexer) readNextChar() {
-	log.Printf("readNextChar Called readPosition %d position %d len input %d", l.readPosition, l.position, len(l.input))
+	// log.Printf("readNextChar Called readPosition %d position %d len input %d", l.readPosition, l.position, len(l.input))
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
 	} else {

@@ -4,7 +4,7 @@ This is a Compiler written in go.
 First Creating a interpretter then compiler
 
 
-## YAL - Yet Another Language
+## YAPL - Yet Another Programming Language
 
 
 this is sudo languge that we will be writing the code for
@@ -29,5 +29,5 @@ let add = fn(a,b) {return a+b};
 
 
 ## Some Notes
-- i wanted to undertsand how interpretters work, by creating one from scratch.
+- i wanted to undertsand how interpreters work, by creating one from scratch.
 - onlysupports ASCII
