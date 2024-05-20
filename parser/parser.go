@@ -42,7 +42,9 @@ func NewParser(l *lexer.Lexer) *Parser {
 	p.registerInfix(tokens.TokenTypeNotEQ, p.parseInfixExpression)
 	p.registerInfix(tokens.TokenTypeLT, p.parseInfixExpression)
 	p.registerInfix(tokens.TokenTypeGT, p.parseInfixExpression)
-
+	p.registerPrefix(tokens.TokenTypeTrue, p.parseBoolean)
+	p.registerPrefix(tokens.TokenTypeFalse, p.parseBoolean)
+	p.registerPrefix(tokens.TokenTypeLParen, p.parseGroupedExpression)
 	return p
 }
 
@@ -112,8 +114,7 @@ func (p *Parser) ParseStatement() ast.Statement {
 	case tokens.TokenTypeReturn:
 		return p.ParseReturnStatements()
 	default:
-		// TODO remove expression type statements
-		return p.parseExpressionStatement()
+		return nil
 	}
 }
 

@@ -90,18 +90,22 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	return expression
 }
 
+func (p *Parser) parseBoolean() ast.Expression {
+	return &ast.Boolean{Token: p.curToken, Value: p.curTokenIs(tokens.TokenTypeTrue)}
+}
+
+func (p *Parser) parseGroupedExpression() ast.Expression {
+	p.nextToken()
+	exp := p.parseExpression(LOWEST)
+	if !p.expectPeek(tokens.TokenTypeRParen) {
+		return nil
+	}
+	return exp
+}
+
 func (p *Parser) noPrefixParseFnError(t tokens.TokenType) {
 	msg := fmt.Sprintf("no prefix parse function for %s found", t)
 	p.errors = append(p.errors, msg)
-}
-
-func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
-	stmt := &ast.ExpressionStatement{Token: p.curToken}
-	stmt.Expression = p.parseExpression(LOWEST)
-	if p.peekTokenIs(tokens.TokenTypeSemiColon) {
-		p.nextToken()
-	}
-	return stmt
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
