@@ -44,3 +44,23 @@ func (rs *ReturnStatement) String() string {
 	return out.String()
 
 }
+
+type AssignmentStatement struct {
+	Token tokens.Token // return
+	Value Expression
+}
+
+func (as *AssignmentStatement) statementNode()       {}
+func (as *AssignmentStatement) TokenLiteral() string { return as.Token.Literal }
+func (as *AssignmentStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString(as.TokenLiteral() + " ")
+	out.WriteString("= ")
+	if as.Value != nil {
+		out.WriteString(as.Value.String())
+	}
+
+	out.WriteString(";")
+	return out.String()
+
+}

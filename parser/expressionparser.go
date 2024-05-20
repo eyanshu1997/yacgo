@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/eyanshu1997/yacgo/ast"
@@ -28,6 +29,7 @@ var precedences = map[tokens.TokenType]int{
 	tokens.TokenTypeSubtract: SUM,
 	tokens.TokenTypeDivide:   PRODUCT,
 	tokens.TokenTypeAstrisk:  PRODUCT,
+	tokens.TokenTypeLParen:   CALL,
 }
 
 func (p *Parser) peekPrecedence() int {
@@ -78,6 +80,20 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 	return expression
 }
 
+func (p *Parser) parseBlockStatement() *ast.BlockStatement {
+	block := &ast.BlockStatement{Token: p.curToken}
+	block.Statements = []ast.Statement{}
+	p.nextToken()
+	for !p.curTokenIs(tokens.TokenTypeRBrace) && !p.curTokenIs(tokens.TokenTypeEOF) {
+		stmt := p.parseStatement()
+		if stmt != nil {
+			block.Statements = append(block.Statements, stmt)
+		}
+		p.nextToken()
+	}
+	return block
+}
+
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	expression := &ast.InfixExpression{
 		Token:    p.curToken,
@@ -109,19 +125,48 @@ func (p *Parser) noPrefixParseFnError(t tokens.TokenType) {
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
+	log.Printf("parseExpression current token %s", p.curToken)
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
 		p.noPrefixParseFnError(p.curToken.Type)
 		return nil
 	}
 	leftExp := prefix()
+	log.Printf("parseExpression after prefixParseFns leftExp [%s] currtoen[%s] peektokenType[%s][%d]", leftExp, p.curToken, p.peekToken, p.peekPrecedence())
 	for !p.peekTokenIs(tokens.TokenTypeSemiColon) && precedence < p.peekPrecedence() {
+		log.Printf("inside loop for parseExpression")
 		infix := p.infixParseFns[p.peekToken.Type]
 		if infix == nil {
 			return leftExp
 		}
 		p.nextToken()
 		leftExp = infix(leftExp)
+		log.Printf("inside loop for parseExpression after infix [%s] curtoken [%s]", leftExp, p.curToken)
 	}
 	return leftExp
+}
+
+func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
+	log.Printf("Call expresion called %s token:[%s]", function, p.curToken)
+	exp := &ast.CallExpression{Token: p.curToken, Function: function}
+	exp.Arguments = p.parseCallArguments()
+	return exp
+}
+func (p *Parser) parseCallArguments() []ast.Expression {
+	args := []ast.Expression{}
+	if p.peekTokenIs(tokens.TokenTypeRParen) {
+		p.nextToken()
+		return args
+	}
+	p.nextToken()
+	args = append(args, p.parseExpression(LOWEST))
+	for p.peekTokenIs(tokens.TokenTypeComma) {
+		p.nextToken()
+		p.nextToken()
+		args = append(args, p.parseExpression(LOWEST))
+	}
+	if !p.expectPeek(tokens.TokenTypeRParen) {
+		return nil
+	}
+	return args
 }

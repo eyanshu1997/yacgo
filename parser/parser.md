@@ -3,13 +3,13 @@ this package is the parser that reads each statements and transfers them into as
 
 ### Supported syntax
 #### let statments
-```let a =5```
-```let a =<expression>```
-```let a =fn(){function defination}```
+```let a =5;```
+```let a =<expression>;```
+```let a =fn(){function defination};```
 
 #### return statements
-```return a```
-```return expr```
+```return a;```
+```return expr;```
 
 #### expressions
 they can be combination of any operations defined under
@@ -48,13 +48,6 @@ add(add(2, 3), add(5, 10))
 max(5, add(5, (5 * 5)))
 
 
-### function expressions
-fn(x, y) { return x + y }(5, 5)
-(fn(x) { return x }(5) + 10 ) * 10
-
-### if expressions
-let result = if (10 > 5) { true } else { false };
-result // => true
 
 ### postfix operators
 not supported here

@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/eyanshu1997/yacgo/ast"
@@ -45,43 +44,41 @@ func NewParser(l *lexer.Lexer) *Parser {
 	p.registerPrefix(tokens.TokenTypeTrue, p.parseBoolean)
 	p.registerPrefix(tokens.TokenTypeFalse, p.parseBoolean)
 	p.registerPrefix(tokens.TokenTypeLParen, p.parseGroupedExpression)
+	p.registerInfix(tokens.TokenTypeLParen, p.parseCallExpression)
+
 	return p
 }
 
-func (p *Parser) nextToken() {
-	p.curToken = p.peekToken
-	p.peekToken = *p.l.ReadNextToken()
-}
+func (p *Parser) parseIfStatement() ast.Statement {
 
-func (p *Parser) peekError(t tokens.TokenType) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
-		t, p.peekToken.Type)
-	log.Println(msg)
-	p.errors = append(p.errors, msg)
-}
-func (p *Parser) Errors() []string {
-	return p.errors
-}
-func (p *Parser) curTokenIs(t tokens.TokenType) bool {
-	return p.curToken.Type == t
-}
-
-func (p *Parser) peekTokenIs(t tokens.TokenType) bool {
-	return p.peekToken.Type == t
-}
-
-// checks next token if it is the expected one increment,else return
-func (p *Parser) expectPeek(t tokens.TokenType) bool {
-	if p.peekTokenIs(t) {
-		p.nextToken()
-		return true
-	} else {
-		p.peekError(t)
-		return false
+	expression := &ast.IfStatement{Token: p.curToken}
+	if !p.expectPeek(tokens.TokenTypeLParen) {
+		return nil
 	}
+	p.nextToken()
+	log.Printf("ifstatement found  %s", p.curToken)
+	expression.Condition = p.parseExpression(LOWEST)
+	if !p.expectPeek(tokens.TokenTypeRParen) {
+		return nil
+	}
+	if !p.expectPeek(tokens.TokenTypeLBrace) {
+		return nil
+	}
+	expression.Consequence = p.parseBlockStatement()
+	if p.peekTokenIs(tokens.TokenTypeElse) {
+
+		p.nextToken()
+		log.Printf("Looking in else block curtoken [%s]", p.curToken)
+		if !p.expectPeek(tokens.TokenTypeLBrace) {
+			return nil
+		}
+		expression.Alternative = p.parseBlockStatement()
+	}
+
+	return expression
 }
 
-func (p *Parser) ParseLetStatement() ast.Statement {
+func (p *Parser) parseLetStatement() ast.Statement {
 	stmt := &ast.LetStatement{Token: p.curToken}
 	if !p.expectPeek(tokens.TokenTypeIdentifier) {
 		return nil
@@ -90,29 +87,59 @@ func (p *Parser) ParseLetStatement() ast.Statement {
 	if !p.expectPeek(tokens.TokenTypeAssign) {
 		return nil
 	}
-	//TODO implement handling for expressions
-	for !p.curTokenIs(tokens.TokenTypeSemiColon) {
-		p.nextToken()
+	p.nextToken()
+	log.Printf("Found let statement [%s]: [%s]", stmt, p.curToken)
+	stmt.Value = p.parseExpression(LOWEST)
+	if !p.expectPeek(tokens.TokenTypeSemiColon) {
+		return nil
 	}
 	return stmt
 }
 
-func (p *Parser) ParseReturnStatements() ast.Statement {
+func (p *Parser) parseReturnStatement() ast.Statement {
 	stmt := &ast.ReturnStatement{Token: p.curToken}
-	//TODO implement handling for expressions
-	for !p.curTokenIs(tokens.TokenTypeSemiColon) {
-		p.nextToken()
+	p.nextToken()
+	log.Printf("Found return statement [%s]: [%s]", stmt, p.curToken)
+	stmt.ReturnValue = p.parseExpression(LOWEST)
+	if !p.expectPeek(tokens.TokenTypeSemiColon) {
+		return nil
 	}
 	return stmt
 }
 
-func (p *Parser) ParseStatement() ast.Statement {
+func (p *Parser) parseFunctionStatement() ast.Statement {
+	stmt := &ast.FunctionStatement{Token: p.curToken}
+	//TODO implement this
+	return stmt
+}
+
+func (p *Parser) parseIdentifierStatement() ast.Statement {
+	stmt := &ast.AssignmentStatement{Token: p.curToken}
+	if !p.expectPeek(tokens.TokenTypeAssign) {
+		return nil
+	}
+	p.nextToken()
+	log.Printf("Found assignment statement [%s]: [%s]", stmt, p.curToken)
+	stmt.Value = p.parseExpression(LOWEST)
+	if !p.expectPeek(tokens.TokenTypeSemiColon) {
+		return nil
+	}
+	return stmt
+}
+
+func (p *Parser) parseStatement() ast.Statement {
 	log.Printf("Parse Statement called token : %s %s", p.curToken, p.peekToken)
 	switch p.curToken.Type {
 	case tokens.TokenTypeLet:
-		return p.ParseLetStatement()
+		return p.parseLetStatement()
 	case tokens.TokenTypeReturn:
-		return p.ParseReturnStatements()
+		return p.parseReturnStatement()
+	case tokens.TokenTypeFunction:
+		return p.parseFunctionStatement()
+	case tokens.TokenTypeIf:
+		return p.parseIfStatement()
+	case tokens.TokenTypeIdentifier:
+		return p.parseIdentifierStatement()
 	default:
 		return nil
 	}
@@ -123,7 +150,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 	for p.curToken.Type != tokens.TokenTypeEOF {
-		stmt := p.ParseStatement()
+		stmt := p.parseStatement()
 		if stmt != nil {
 			log.Printf("Got statement %s", stmt)
 			program.Statements = append(program.Statements, stmt)
