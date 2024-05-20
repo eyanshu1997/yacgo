@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/eyanshu1997/yacgo/lexer"
+	"github.com/eyanshu1997/yacgo/parser"
 )
 
 const PROMPT = ">> "
@@ -26,7 +27,7 @@ func Start(in io.Reader, out io.Writer) {
 		}
 		line := scanner.Text()
 		l := lexer.NewLexer(line)
-		p := parser.New(l)
+		p := parser.NewParser(l)
 		program := p.ParseProgram()
 		if len(p.Errors()) != 0 {
 			printParserErrors(out, p.Errors())
