@@ -1,15 +1,15 @@
-# YACGO - yet another Compiler in go
+# YACGO - Yet Another Compiler in GO
 
 This is a Compiler written in go. 
 First Creating a interpretter then compiler
 
 
-## YAL - yet another language
+## YAL - Yet Another Language
 
 
 this is sudo languge that we will be writing the code for
 
-### syntaX
+### Syntax
 ```
 let age =1;
 let name = "YAL"
@@ -19,7 +19,7 @@ let myhash= {"name":"yal","type":"lang"}
 let add = fn(a,b) {return a+b};
 
 ```
-### components
+### Components
 - lexer 
 - parser
 - ast
@@ -28,6 +28,6 @@ let add = fn(a,b) {return a+b};
 
 
 
-## Some notes
+## Some Notes
 - i wanted to undertsand how interpretters work, by creating one from scratch.
 - onlysupports ASCII
