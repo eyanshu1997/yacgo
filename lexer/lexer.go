@@ -1,6 +1,8 @@
 package lexer
 
 import (
+	"log"
+
 	"github.com/eyanshu1997/yacgo/tokens"
 	"github.com/eyanshu1997/yacgo/utils"
 )
@@ -66,7 +68,7 @@ func (l *Lexer) getMultiToken() *tokens.Token {
 		l.readNextChar()
 		return &tokens.Token{Type: tokens.TokenTypeEQ, Literal: string(ch) + string(l.ch)}
 	}
-	if l.ch == '=' && l.peekNextChar() == '!' {
+	if l.ch == '!' && l.peekNextChar() == '=' {
 		ch := l.ch
 		l.readNextChar()
 		return &tokens.Token{Type: tokens.TokenTypeNotEQ, Literal: string(ch) + string(l.ch)}
@@ -80,6 +82,8 @@ func (l *Lexer) ReadNextToken() *tokens.Token {
 	if tokens.CanHaveNextToken(l.ch) {
 		tok = l.getMultiToken()
 		if tok != nil {
+			log.Println("Found multitoken", tok)
+			l.readNextChar()
 			return tok
 		}
 	}

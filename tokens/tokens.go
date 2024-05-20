@@ -6,7 +6,7 @@ const (
 )
 
 var (
-	multiToken = []byte{'='}
+	multiToken = []byte{'=', '!'}
 )
 
 type TokenType string

@@ -98,3 +98,27 @@ func TestLotsOfTokens(t *testing.T) {
 		}
 	}
 }
+
+func TestMultiToken(t *testing.T) {
+	input := `==5!=`
+	tests := []struct {
+		expectedType    tokens.TokenType
+		expectedLiteral string
+	}{
+		{tokens.TokenTypeEQ, "=="},
+		{tokens.TokenTypeInt, "5"},
+		{tokens.TokenTypeNotEQ, "!="},
+	}
+	l := NewLexer(input)
+	for i, tt := range tests {
+		tok := l.ReadNextToken()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q",
+				i, tt.expectedType, tok.Type)
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q",
+				i, tt.expectedLiteral, tok.Literal)
+		}
+	}
+}

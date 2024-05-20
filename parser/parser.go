@@ -33,6 +33,16 @@ func NewParser(l *lexer.Lexer) *Parser {
 	p.registerPrefix(tokens.TokenTypeInt, p.parseIntegerLiteral)
 	p.registerPrefix(tokens.TokenTypeExclaim, p.parsePrefixExpression)
 	p.registerPrefix(tokens.TokenTypeSubtract, p.parsePrefixExpression)
+	p.infixParseFns = make(map[tokens.TokenType]infixParseFn)
+	p.registerInfix(tokens.TokenTypePlus, p.parseInfixExpression)
+	p.registerInfix(tokens.TokenTypeSubtract, p.parseInfixExpression)
+	p.registerInfix(tokens.TokenTypeDivide, p.parseInfixExpression)
+	p.registerInfix(tokens.TokenTypeAstrisk, p.parseInfixExpression)
+	p.registerInfix(tokens.TokenTypeEQ, p.parseInfixExpression)
+	p.registerInfix(tokens.TokenTypeNotEQ, p.parseInfixExpression)
+	p.registerInfix(tokens.TokenTypeLT, p.parseInfixExpression)
+	p.registerInfix(tokens.TokenTypeGT, p.parseInfixExpression)
+
 	return p
 }
 
