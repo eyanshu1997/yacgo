@@ -33,6 +33,14 @@ const (
 	TokenTypeIf       TokenType = "IF"
 	TokenTypeElse     TokenType = "ELSE"
 	TokenTypeReturn   TokenType = "RETURN"
+
+	//MultiToken
+	TokenTypeEQ    TokenType = "=="
+	TokenTypeNotEQ TokenType = "!="
+)
+
+var (
+	multiToken = []byte{'='}
 )
 
 type TokenType string
@@ -44,4 +52,13 @@ type Token struct {
 
 func NewToken(tokenType TokenType, literal byte) *Token {
 	return &Token{Type: tokenType, Literal: string(literal)}
+}
+
+func CanHaveNextToken(ch byte) bool {
+	for _, b := range multiToken {
+		if b == ch {
+			return true
+		}
+	}
+	return false
 }

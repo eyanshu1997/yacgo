@@ -31,9 +31,60 @@ func (l *Lexer) readNextChar() {
 	l.readPosition = l.readPosition + 1
 }
 
+func (l *Lexer) readIdentifier() string {
+	position := l.position
+	for utils.IsLetter(l.ch) {
+		l.readNextChar()
+	}
+	return l.input[position:l.position]
+}
+
+func (l *Lexer) skipWhitespace() {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+		l.readNextChar()
+	}
+}
+
+func (l *Lexer) readNumber() string {
+	position := l.position
+	for utils.IsDigit(l.ch) {
+		l.readNextChar()
+	}
+	return l.input[position:l.position]
+}
+
+func (l *Lexer) peekNextChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPosition]
+	}
+
+}
+
+func (l *Lexer) getMultiToken() *tokens.Token {
+	if l.ch == '=' && l.peekNextChar() == '=' {
+		ch := l.ch
+		l.readNextChar()
+		return &tokens.Token{Type: tokens.TokenTypeEQ, Literal: string(ch) + string(l.ch)}
+	}
+	if l.ch == '=' && l.peekNextChar() == '!' {
+		ch := l.ch
+		l.readNextChar()
+		return &tokens.Token{Type: tokens.TokenTypeNotEQ, Literal: string(ch) + string(l.ch)}
+	}
+	return nil
+}
+
 func (l *Lexer) ReadNextToken() *tokens.Token {
 	var tok = &tokens.Token{}
 	l.skipWhitespace()
+	if tokens.CanHaveNextToken(l.ch) {
+		tok = l.getMultiToken()
+		if tok != nil {
+			return tok
+		}
+	}
 	switch l.ch {
 	case ',':
 		tok = tokens.NewToken(tokens.TokenTypeComma, l.ch)
@@ -83,26 +134,4 @@ func (l *Lexer) ReadNextToken() *tokens.Token {
 	}
 	l.readNextChar()
 	return tok
-}
-
-func (l *Lexer) readIdentifier() string {
-	position := l.position
-	for utils.IsLetter(l.ch) {
-		l.readNextChar()
-	}
-	return l.input[position:l.position]
-}
-
-func (l *Lexer) skipWhitespace() {
-	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
-		l.readNextChar()
-	}
-}
-
-func (l *Lexer) readNumber() string {
-	position := l.position
-	for utils.IsDigit(l.ch) {
-		l.readNextChar()
-	}
-	return l.input[position:l.position]
 }
